@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة حل منصة سبريكس المجانية</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #1e293b;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.6);
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid #334155;
+        }
+        h2 { text-align: center; color: #38bdf8; margin-bottom: 5px; }
+        .developer-tag {
+            text-align: center;
+            font-size: 13px;
+            color: #38bdf8;
+            background-color: #0f172a;
+            padding: 7px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border: 1px dashed #0284c7;
+        }
+        p { text-align: center; font-size: 13px; color: #94a3b8; margin-bottom: 15px; }
+        label { font-size: 14px; color: #cbd5e1; display: block; margin-top: 10px; }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border: none;
+            box-sizing: border-box;
+            background-color: #334155;
+            color: #fff;
+            font-size: 14px;
+        }
+        button {
+            background-color: #0284c7;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #0369a1; }
+        #result { 
+            margin-top: 15px; 
+            font-size: 13px; 
+            background-color: #0f172a; 
+            padding: 10px; 
+            border-radius: 6px; 
+            max-height: 150px; 
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>منصة الحل المجانية</h2>
+        <div class="developer-tag">✨ تطوير وبرمجة: <b>العلياني</b> ✨</div>
+        <p>أدخل بياناتك وحدد صفك الدراسي والمادة للبدء</p>
+        
+        <label>اسم المستخدم (Username):</label>
+        <input type="text" id="username" placeholder="اكتب اليوزرنيم هنا">
+        
+        <label>كلمة المرور (Password):</label>
+        <input type="password" id="password" placeholder="اكتب الباسورد هنا">
+        
+        <label>السنة الدراسية:</label>
+        <select id="grade">
+            <option value="grade_1">أولى ثانوي</option>
+            <option value="grade_2">تانية ثانوي</option>
+        </select>
+
+        <label>المادة / القسم المطلوب حله:</label>
+        <select id="section">
+            <option value="javascript">لغة جافا سكريبت (JavaScript)</option>
+            <option value="python">لغة بايثون (Python)</option>
+            <option value="financial_culture">الثقافة المالية</option>
+        </select>
+        
+        <button onclick="startSolving()">بدء الحل التلقائي</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function startSolving() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const grade = document.getElementById('grade').value;
+            const section = document.getElementById('section').value;
+            const resDiv = document.getElementById('result');
+
+            if(!user || !pass) {
+                resDiv.style.color = '#ef4444';
+                resDiv.innerText = 'الرجاء إدخال اسم المستخدم وكلمة المرور!';
+                return;
+            }
+
+            resDiv.style.color = '#38bdf8';
+            resDiv.innerHTML = 'جاري الاتصال وتسجيل الدخول...<br>';
+
+            try {
+                let response = await fetch('https://YOUR-RENDER-APP-URL.com/solve', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass, grade: grade, section: section })
+                });
+
+                let data = await response.json();
+                
+                if(response.ok) {
+                    let stepsHtml = "";
+                    data.steps.forEach((step, index) => {
+                        stepsHtml += `✔️ تم حل الفصل ${index + 1}: ${step}<br>`;
+                    });
+                    resDiv.style.color = '#22c55e';
+                    resDiv.innerHTML = stepsHtml + '<br><strong>🎉 تم الانتهاء من جميع الفصول بنجاح!</strong>';
+                } else {
+                    resDiv.style.color = '#ef4444';
+                    resDiv.innerText = 'فشل في عملية الحل، تأكد من البيانات.';
+                }
+            } catch (error) {
+                resDiv.style.color = '#ef4444';
+                resDiv.innerText = 'خطأ في الاتصال بالسيرفر.';
+            }
+        }
+    </script>
+
+</body>
+</html>
